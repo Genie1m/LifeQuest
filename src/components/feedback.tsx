@@ -9,7 +9,7 @@ export function LoadingState() {
 }
 export function StorageFeedback() {
   const { status, error, reload } = useAppState();
-  if (status === "loading") return <LoadingState />;
+  if (status === "loading" && !error) return <LoadingState />;
   if (!error) return null;
   return <div className="feedback error-feedback" role="alert"><AlertTriangle className="size-5 shrink-0" aria-hidden="true" /><div className="flex-1"><p className="font-medium">本地档案暂时不可用</p><p className="mt-1 text-sm">{error.message}</p></div><Button variant="outline" onClick={() => void reload()}><RefreshCw aria-hidden="true" />重新读取</Button></div>;
 }

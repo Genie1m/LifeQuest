@@ -22,6 +22,6 @@ export function PlaceholderPage({ kind, goalId }: { kind: PageKind; goalId?: str
   return <div className="page-enter">
     <div className="page-heading"><span className="eyebrow">{page.eyebrow}</span><h1>{page.title}</h1><p>{page.description}</p></div>
     <Card className="placeholder-card"><span className="feature-icon"><Icon aria-hidden="true" size={30} /></span><span className="stage-badge">{page.step} · 未实现</span><h2>{missingGoal ? "未找到这个目标" : page.section}</h2><p>{missingGoal ? "本地档案中不存在该目标，详情与计划操作也尚未开放。请返回目标页面。" : page.detail}</p><div className="placeholder-actions">{kind === "goals" ? <Button asChild><Link href="/goals/new">查看创建入口<ArrowRight aria-hidden="true" /></Link></Button> : <Button asChild variant="outline"><Link href={goalId || kind === "new-goal" ? "/goals" : "/"}><ArrowLeft aria-hidden="true" />{goalId || kind === "new-goal" ? "返回目标" : "返回冒险"}</Link></Button>}</div></Card>
-    <p className="scope-note">当前为 Step 2 基础骨架 · 此页面尚不提供业务操作</p>
+    <p className="scope-note">当前为基础页面预览 · 此页面尚不提供业务操作</p>
   </div>;
 }

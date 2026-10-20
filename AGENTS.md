@@ -10,7 +10,7 @@
 - 批准发布后，只将批准的提交安全快进/合并到 main；首次推送复核远程归属与目标分支。远程有新提交先 fetch 检查，冲突停止报告，禁止 force push。
 - 不要求用户在聊天中提供 Token、密码或私钥；使用官方交互式认证。不自动安装 Supabase、LLM SDK 或复杂状态框架。
 
-当前授权阶段：Step 2（应用骨架、设计系统、本地数据基础、受控 GitHub 管理）。用户已授权创建自己账号下的私有 `lifequest` 空仓库，尚未授权推送任何代码。
+当前授权阶段：Step 2.5（Arcane Indigo 设计系统优化、依赖审计、Turbopack 核实与 GitHub 准备）。仅在 dev 增量修改；不得开始 Step 3、改 XP 规则、接入 AI、开发 Mock Planner，或新增 Agent/RAG 框架。本轮不得创建仓库、改变可见性、修改远程设置、合并到 main、push 或创建 PR；远程只读核对，认证由用户通过官方流程完成。
 
 <!-- BEGIN:nextjs-agent-rules -->
 

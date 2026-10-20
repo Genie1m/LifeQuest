@@ -5,11 +5,10 @@ import { Card } from "@/components/ui/card";
 
 export default function Home() {
   return <div className="page-enter">
-    <div className="welcome-line"><span className="eyebrow">YOUR ADVENTURE STARTS HERE</span><span className="stage-badge">STEP 02 · 基础骨架</span></div>
+    <div className="welcome-line"><span className="eyebrow">LIFEQUEST / 序章</span><span className="stage-badge">基础预览 · 业务功能尚未开放</span></div>
     <section className="hero" aria-labelledby="hero-title">
-      <div className="hero-copy"><span className="hero-kicker"><span /> 冒险序章</span><h1 id="hero-title">你的人生，<br />值得一场<span>冒险。</span></h1><p>把现实中的目标，写成自己的成长故事。<br className="desktop-break" />方向由你决定，每一步都属于你。</p><Button asChild><Link href="/onboarding">探索冒险起点<ArrowRight aria-hidden="true" /></Link></Button><span className="hero-disclaimer">角色创建将在 Step 3 开放</span></div>
-      <div className="compass-art" aria-hidden="true"><div className="orbit orbit-outer" /><div className="orbit orbit-inner" /><span className="compass-north">N</span><span className="compass-south">S</span><span className="compass-west">W</span><span className="compass-east">E</span><div className="compass-diamond" /><div className="compass-needle" /><div className="compass-center" /><span className="art-star star-one">✦</span><span className="art-star star-two">✧</span><span className="art-caption">A JOURNEY OF YOUR OWN</span></div>
-      <span className="hero-index" aria-hidden="true">CHAPTER / 00</span>
+      <div className="hero-copy"><span className="hero-kicker"><Sparkles aria-hidden="true" />AI 辅助规划 × RPG 成长</span><h1 id="hero-title">把现实的目标，<br />写成<span>成长的冒险。</span></h1><p>AI 提供建议，路径由你决定。<br className="desktop-break" />用真实生活中的行动，慢慢塑造自己的角色。</p><Button asChild><Link href="/onboarding">探索冒险起点<ArrowRight aria-hidden="true" /></Link></Button><span className="hero-disclaimer">角色创建将在 Step 3 开放</span></div>
+      <div className="path-art" aria-hidden="true"><svg viewBox="0 0 240 300" fill="none"><path d="M40 250C190 240 50 160 150 130S210 80 175 40" stroke="var(--border-control)" strokeWidth="1.5" strokeDasharray="5 8" /><circle cx="40" cy="250" r="7" fill="var(--surface-elevated)" stroke="var(--secondary)" strokeWidth="2" /><circle cx="150" cy="130" r="7" fill="var(--surface-elevated)" stroke="var(--secondary)" strokeWidth="2" /><circle cx="175" cy="40" r="22" fill="var(--surface-selected)" /><path d="m175 26 4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill="var(--secondary)" /></svg><span className="path-art-caption">YOUR OWN PATH</span></div>
     </section>
     <section className="journey-section" aria-labelledby="journey-heading"><div className="section-heading"><div><span className="eyebrow">THE PATH AHEAD</span><h2 id="journey-heading">成长的旅程，将从这里展开</h2></div><span className="muted-label">后续能力预告 · 尚未实现</span></div><div className="journey-grid">{[
       { number: "01", icon: Shield, title: "建立你的角色", description: "选择冒险身份，让每次行动都成为成长的印记。", href: "/character", label: "角色档案" },
