@@ -1,6 +1,6 @@
 # LifeQuest 第一阶段路线图
 
-版本：0.2 · 日期：2026-10-20 · 状态：Step 1 已验收；Step 2 开发完成，等待人工验收
+版本：0.3 · 日期：2026-10-20 · 状态：Step 2.5 完成，等待人工验收；尚未启动 Step 3
 
 范围基准：[PRD.md](PRD.md)；技术基准：[ARCHITECTURE.md](ARCHITECTURE.md)。第一阶段目标是基于 Mock Planner 与 localStorage 的可交互前端 MVP，不包含真实 AI 或数据库。
 
@@ -16,12 +16,13 @@
 
 ## 2. 八步迭代
 
-用户本轮 Step 1 对应下表第 1 步；余下七步在本轮验收之后逐步实施。
+原始 MVP 主线为八步；用户在 Step 2 与 Step 3 之间新增 Step 2.5，先完成设计系统和工程健康复核，再决定是否进入业务开发。每步均需独立验收，不自动推进。
 
 | 步骤 | 开发目标与具体范围 | 依赖 | 验收标准 | 本步不做 | 建议提交 |
 | --- | --- | --- | --- | --- | --- |
 | 1. 产品理解与规划 | 检查目录；确定用户、核心闭环、信息架构、规则、模型和路线图；建立文档仓库 | 无 | 三文档齐全、相互链接、范围一致；无页面/依赖/API/数据库变更；本地 Git 提交可查 | 应用初始化、页面和业务实现 | `docs: define LifeQuest MVP and development roadmap` |
 | 2. 应用骨架与本地状态基础 | 初始化 Next.js/TS/Tailwind；按需引入 shadcn/ui；实现三入口导航、加载/错误空状态；建立数据类型、Repository、Provider 和运行时校验 | 1 验收通过 | 应用可启动、构建及类型检查通过；空快照/有效快照加载正确；非法数据不会触发覆盖；存储错误能看到；提交依赖锁文件 | 建角业务、目标编辑、XP、Planner、云服务 | `chore: initialize app shell and local state foundation` |
+| 2.5. 设计系统与工程健康 | Arcane Indigo token/字体/组件/占位视觉；审计依赖；复核构建器；核对 GitHub 与官方认证指引 | 2 的本地工程基线 35a0097 | 1440/390/320px 无溢出；可读性、焦点及底栏检查；typecheck/lint/23 测试/build；有审计和环境记录、本地提交 | Step 3 表单、AI/Mock Planner、XP 改动、依赖强制修复、远程写入 | `feat: adopt Arcane Indigo design system` |
 | 3. 角色与目标入口 | 创建本地身份及角色；内置头像；目标字段表单、一个非完成目标限制；创建目标和空计划草稿，导航到编辑占位 | 2 验收通过 | 首访引导正确；角色与目标刷新可恢复；表单边界可见；不能创建第二个未完成目标；空计划不能开始执行 | 生成计划、完整编辑器、任务结算、复杂角色系统 | `feat: add character onboarding and goal setup` |
 | 4. 手动计划编辑与确认 | 阶段/任务增删改、上下移动、草稿防抖保存与离开 flush、预览汇总、首次确认；执行中手动修订的基础框架 | 3 验收通过 | 手工建立有效计划并激活；空阶段/非法任务拒绝确认；顺序及草稿恢复正确；未确认内容不进入执行计划；放弃修订保留正式计划 | Mock 生成与调整、XP 动画、拖拽、历史版本恢复 | `feat: add editable plans and explicit confirmation` |
 | 5. Mock 初始规划 | Planner 接口、确定性模板、生成 loading/error/retry、建议预览与接受到草稿；目标表单接入生成入口 | 4 验收通过 | 同输入生成稳定且符合字段校验的三阶段建议；清楚标明 Mock；接受后仍需确认；覆盖草稿先确认；失败/过期响应不破坏原内容；可手动创建 | 调整建议、真实 LLM、隐式自动激活 | `feat: add mock planning suggestions` |
@@ -105,4 +106,41 @@ Turbopack 构建失败已在沙箱内外复现；改为官方 Webpack 路径后�
 
 ### 下一步
 
-先由用户验收 Step 2；如明确批准 GitHub 发布，核对批准 commit、远程归属和分支后才执行指定发布操作。Step 3“角色与目标入口”需要另行授权，不随本轮完成自动启动。
+Step 2 的本地提交为 35a0097。用户先要求执行下方 Step 2.5，尚未授权合并 main 或推送；Step 3 继续保持未启动。
+
+## 7. Step 2.5 实际完成记录
+
+日期：2026-10-20。基于干净 dev / 35a0097 增量修改；main 仍保持 f327cfe。
+
+### 范围与产物
+
+- Arcane Indigo 替换墨绿/暖金视觉：运行时/主题 token、字体层级、导航、按钮、卡片、加载/空/错误页、首页轻量路径图和站点图标。
+- 说明文字最低 12px，正文 14–16px；保留三入口、7 路由和原有数据架构，无新业务表单或假 XP。
+- 增加 2 项反馈测试；修正初始化期间跨标签错误可能被 loading 遮住的问题。原有领域和存储实现未修改。
+- 设计规范及变更记录见 DESIGN.md；依赖审计、Turbopack 复核、GitHub 官方安装认证与保护建议见 ENGINEERING_HEALTH.md；README 已同步。
+- PRD、package.json、package-lock.json 未修改；未引入任何依赖、AI/Agent/RAG 或 Mock Planner 实现。
+
+### 最终检查结果
+
+| 项目 | 结果 |
+| --- | --- |
+| npm run typecheck | 通过；新增测试的 Promise 类型已修正 |
+| npm run lint | 通过，0 警告 |
+| npm test | 3 文件，23 项通过 |
+| npm run build | 最终沙箱外 Webpack 构建通过；中途沙箱曾出现 .next/types mkdir EPERM，已停止测试服务重试核实 |
+| Turbopack build | 直接调用 Next CLI、沙箱外构建通过；旧 CSS 子进程错误未复现，根因不确定，默认仍用 Webpack |
+| Chrome 页面 | 三种宽度下 7 路由均 200；无横向溢出、未捕获页面异常或 console error |
+| 生产启动复核 | 最终 Webpack 产物于本机 3002 启动，同一浏览器清单通过；最终截图来自生产版本 |
+| 交互与可读性 | 实际无衬线字体；可见文字至少 12px；Hover、3px/4px 紫色 Focus、Disabled 状态通过 |
+| 移动底栏 | 390/320px 末尾内容可滚动到栏上方，正文链接聚焦时不被底栏遮挡 |
+| 可访问性局部检查 | 9 组 token 对比度达到对应 4.5:1 / 3:1 门槛；减少动态效果生效；错误含图标/文字/role=alert |
+| 依赖审计 | 最终 production 0，全量 5 High（同一 braces 公告沿开发依赖链传播）；无可靠兼容修复，未变更依赖 |
+
+已查看桌面、移动、空状态与错误截图；图像是开发检查证据，用户视觉验收仍待完成。未进行完整 WCAG 认证、屏幕阅读器、真机、Edge/Safari 或后续业务流程检查。
+
+### GitHub 与停止点
+
+- origin 和连接器只读复核为 Genie1m/LifeQuest、private、owner=Genie1m、admin=true；未修改远程信息或设置。
+- gh 不可用，CLI 认证无法验证。Windows WinGet/MSI 与官方浏览器认证步骤已文档化，用户自行完成授权，不提供或传递聊天凭据。
+- main 保护仅提出建议，套餐及当前规则未确认；没有创建仓库、远程分支或 PR，没有 push、合并 main、force push 或修改其他项目。
+- 在 dev 创建本地提交；本轮精确 hash 与 dev 相对 main 的差异见交付及 Git log。先等待本轮验收，随后可另行授权 Step 3；本机 CLI 认证是未来远程发布前置，不阻挡本地 Step 3，但不能据此跳过审批。

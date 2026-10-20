@@ -1,6 +1,6 @@
 # LifeQuest 技术架构
 
-版本：0.2 · 日期：2026-10-20 · 状态：Step 2 基础架构已实现，待验收
+版本：0.3 · 日期：2026-10-20 · 状态：Step 2.5 设计与工程复核完成，待验收
 
 需求依据：[PRD.md](PRD.md)。开发顺序：[ROADMAP.md](ROADMAP.md)。Step 1 为规划；Step 2 已初始化应用与本地状态基础，未实现后续业务命令、AI 或数据库。
 
@@ -164,7 +164,23 @@ interface Planner {
 - 无第三方 schema 库：当前使用小型手写运行时校验，覆盖模型字段、标识/时间、引用、状态和流水一致性。草稿内容允许未填写，正式计划字段更严格，避免自动保存草稿被激活校验拦住。
 - `features/`、rules/progression、Planner 及业务命令尚未创建，等对应阶段再引入。Provider 不承担角色创建、任务完成或 XP 结算逻辑。
 - 基础 Button 采用 shadcn/ui 的 Slot/CVA 组合，Card 为项目可编辑源码，components.json 与 Tailwind tokens 已配置；视觉规范见 [DESIGN.md](DESIGN.md)。未引入复杂状态库、表单库或动画库。
-- 使用 Webpack 的唯一原因是本机 Turbopack 处理 CSS 的子进程连接失败，沙箱外重试同样复现；官方支持的 `next dev --webpack` / `next build --webpack` 均已验证。未改变产品架构或业务规则。
+- Step 2 曾因 Turbopack CSS 子进程连接失败采用 Webpack。Step 2.5 直接 Turbopack 生产构建已成功，旧错误未复现，根因仍未确认；默认脚本继续保留已验证的 Webpack。完整环境记录见 [ENGINEERING_HEALTH.md](ENGINEERING_HEALTH.md)。
 - 首屏只展示无业务数据的骨架，加载/错误状态可见；自动建角路由守卫到 Step 3 再实现。本轮不把页面能访问视为业务功能完成。
 - 浏览器测试使用预装 Playwright 驱动独立 Chrome 无头进程，不依赖已登录个人浏览器；本机 Edge/Chrome 的交互控制连接不可用。临时截图与验收脚本保存在忽略的 `.qa/`，不提交个人环境路径。
 - 本轮 PRD 规则未改动；本轮没有 Supabase、LLM SDK 或任何远程数据写入业务实现。
+
+## 11. Step 2.5 视觉与 AI 扩展边界
+
+视觉 token 升级为 Arcane Indigo，采用统一运行时字体与语义色，导航和路由保持原逻辑；不修改领域、Repository、Provider、存储 key/schema 或 XP 规则。新增反馈测试覆盖读取错误与初始化期间的跨标签冲突，修正加载状态可能遮住错误提示的问题。设计见 [DESIGN.md](DESIGN.md)。
+
+现有 Planner.generate/adjust 及草稿隔离可支持以下方向，无需提前引入新框架：
+
+| 后续方向 | 约定的扩展边界 |
+| --- | --- |
+| 个性化成长规划 | 使用目标成功标准、当前基础与投入作为输入，输出可编辑建议，不创建正式执行状态 |
+| 可执行性与合理性检查 | 先做确定性字段/数量/时间校验；后续 AI 语义检查作为原因和风险提示，不替用户确认，不伪称客观保证 |
+| 动态调整 | 以当前 revision 与完成记录摘要为上下文，建议仅修改未完成部分；应用时再次验证版本与完成历史 |
+| 人工审核 | 用户可以编辑、拒绝或接受到草稿，再明确确认；AI 不直接调用 Repository 写正式计划 |
+| 可选成果反馈 | 后续独立阶段设计，用户选择提交最少必要内容；反馈作为附加说明，不成为当前 XP 的输入或改写既有结算 |
+
+AI 只提建议，用户审核确认，程序负责正式状态与奖励结算。未来引入真实模型时再增加服务端密钥、输入隐私、结构化输出及超时/失败处理；本轮不实现 Mock Planner、LLM、Agent/RAG 或 AI 成果评价，也不把这些扩展加入 Step 3。
