@@ -1,16 +1,16 @@
 # LifeQuest 第一阶段路线图
 
-版本：0.1 · 日期：2026-10-20 · 状态：Step 1 文档完成，等待验收
+版本：0.2 · 日期：2026-10-20 · 状态：Step 1 已验收；Step 2 开发完成，等待人工验收
 
 范围基准：[PRD.md](PRD.md)；技术基准：[ARCHITECTURE.md](ARCHITECTURE.md)。第一阶段目标是基于 Mock Planner 与 localStorage 的可交互前端 MVP，不包含真实 AI 或数据库。
 
 ## 1. 协作和 Git 约定
 
 - 当前工作目录原有 `research-onboarding-agent/`，其 README 与产品摘要显示为另一项目。LifeQuest 使用独立 `lifequest/` 目录与 Git 仓库，不移动或修改原项目。
-- 本轮 Step 1 仅产品分析、架构、路线图；文档通过链接、内容和 diff 检查后创建一次有意义的本地提交。
+- Step 1 规划提交为 f327cfe；Step 2 已在同一历史上建立 main/dev，本地开发仅在 dev。
 - 后续每个步骤开发 → 自检 → 提交 → 提供验收说明 → 停止，等待用户通过后再启动下一步。用户反馈的修正另行提交，避免改写历史。
 - 每个独立且通过基础检查的模块都提交；一个步骤较大可分多个模块提交，不把未通过检查的代码当作已完成成果。
-- 提交前检查 Git diff 与 status，仅暂存本任务文件。不自动 push、不改无关 Git 配置、不使用破坏性重置。若缺提交身份，报告阻碍并取得身份信息，不自行编造。
+- 提交前检查 Git diff 与 status，仅按明确路径暂存本任务文件，禁止 git add . / git add -A。不改无关 Git 配置、不使用破坏性重置。任何 push、远程分支创建、PR 创建和远程合并均需用户明确批准；批准后仅发布指定已验收版本。若缺提交身份，报告阻碍并取得身份信息，不自行编造。
 - 功能开发时同步更新相关文档及本表状态；范围/规则变更先写清影响。后续打开项目应先读这三份文档和 Git 状态。
 - 不给出未经工作量验证的工期承诺；按可演示、可单独验收的行为推进。
 
@@ -66,9 +66,43 @@
 | 执行中编辑破坏历史和重复奖励 | 正式计划/草稿隔离；锁定完成内容；唯一流水；重新确认 | 第 6–7 步回归 |
 | 后续迁移低估工作量 | 保留 UUID 和端口，但明确 Auth、RLS、事务、导入需单独开发验收 | 进入 Supabase 阶段前 |
 
-## 6. 当前检查记录与下一步
+## 6. Step 2 实际完成记录
 
-- 已完成：检查工作目录、原项目顶层文件及 README/产品摘要；确认当前目录及原项目均没有 Git 仓库；未发现适用的 AGENTS.md。
-- 本轮产物：PRD、ARCHITECTURE、ROADMAP；检查结果与提交记录由本轮交付说明和 Git log 补充佐证。
-- 尚未执行：应用初始化、依赖安装、页面/业务代码、浏览器功能检查、真实 API 与数据库接入。
-- 下一步建议：用户验收本文三份文档及关键范围取舍后，开始第 2 步“应用骨架与本地状态基础”。本轮到此停止，不自动进入开发。
+日期：2026-10-20。状态为开发完成待验收，尚未合并到 main 或推送。
+
+### 完成范围
+
+- 手工初始化 src/ Next.js App Router + React/TS/Tailwind，按需建立 shadcn/ui Button/Card 与 Lucide；保留原 docs 和 f327cfe 历史。
+- 7 个指定路由、三入口导航、桌面侧栏/移动底栏、加载/空/错误状态、未知页面与未知目标入口。
+- 建立全部领域类型、快照运行时校验、Repository、LocalStorageRepository、客户端 AppProvider 与串行保存/冲突保护。
+- 基础设计规范见 DESIGN.md；安装、启动、存储与 GitHub 说明见根 README.md；长期约束见 AGENTS.md。
+- 没有角色或目标表单、计划编辑/确认命令、XP 结算、Mock Planner、真实 AI 或数据库；PRD 未改动。
+
+### 实际检查
+
+| 检查 | 结果 |
+| --- | --- |
+| npm run typecheck | 通过 |
+| npm run lint | 通过，0 警告 |
+| npm test | 2 个测试文件，21 项通过；含空/有效/损坏快照、禁止覆盖、版本冲突、写入失败、SSR loading、Provider 初始化与串行保存 |
+| npm run build | Webpack 生产构建通过，所有指定路由已生成 |
+| npm run dev + HTTP | 启动成功，本机首页返回 200 |
+| npm start | 默认端口生产启动成功，并通过相同 Chrome 路由/布局/数据异常复核 |
+| Chrome 独立无头检查 | 7 路由 200；入口往返、损坏数据重读后仍保留；未捕获页面异常或 console error |
+| 响应式与截图 | 1440px 桌面、390px/320px 移动宽度无横向溢出；桌面/移动截图已人工查看 |
+| 忽略与敏感信息检查 | node_modules/.next/.env.local/.qa/next-env.d.ts 被忽略；待提交源码和配置未发现秘密；PRD 无改动 |
+| 依赖审计 | production 0；全量 5 项 high 均属 ESLint 开发依赖链，尚无兼容修复，见 README |
+
+Turbopack 构建失败已在沙箱内外复现；改为官方 Webpack 路径后通过，未关闭类型或 lint 检查。未测 Edge/Safari/真机/屏幕阅读器；未执行后续 MVP 业务验收脚本。
+
+### GitHub 与分支
+
+- Git 2.35.1.windows.1；原 master 安全更名为 main，dev 从原提交创建，未改写历史。
+- GitHub 连接器已认证为 Genie1m。检查可访问仓库后发现已有 Genie1m/LifeQuest，为 private、管理员权限、size=0，已关联 origin；未重复创建新仓库。
+- 本机 gh 不可用，Git Credential Manager 没有可非交互使用的凭据；首次命令行推送前需用户完成 README 中的官方认证。连接器可读仓库不代表命令行已登录。
+- 本轮只创建本地 dev 提交；main 仍为 f327cfe；没有 push、远程分支、PR 或远程合并操作。未配置服务端分支保护。
+- 精确提交 hash 与工作区状态见本轮交付和 Git log，避免在同一提交内写入自身 hash。
+
+### 下一步
+
+先由用户验收 Step 2；如明确批准 GitHub 发布，核对批准 commit、远程归属和分支后才执行指定发布操作。Step 3“角色与目标入口”需要另行授权，不随本轮完成自动启动。

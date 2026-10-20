@@ -1,8 +1,8 @@
 # LifeQuest 技术架构
 
-版本：0.1 · 日期：2026-10-20 · 状态：规划，未初始化应用
+版本：0.2 · 日期：2026-10-20 · 状态：Step 2 基础架构已实现，待验收
 
-需求依据：[PRD.md](PRD.md)。开发顺序：[ROADMAP.md](ROADMAP.md)。本轮不安装依赖、不创建 Next.js 应用、不调用 AI、不连接数据库。
+需求依据：[PRD.md](PRD.md)。开发顺序：[ROADMAP.md](ROADMAP.md)。Step 1 为规划；Step 2 已初始化应用与本地状态基础，未实现后续业务命令、AI 或数据库。
 
 ## 1. 技术决策
 
@@ -13,10 +13,10 @@
 | 状态 | React Context + 少量 hooks，领域逻辑为纯函数 | 本地单用户规模，无需 Redux/Zustand 或服务端缓存库 |
 | 持久化 | localStorage 单个版本化 JSON 快照 | 简单可验证；只支持单浏览器、小数据量 |
 | 规划器 | 异步 Planner 接口 + 确定性 Mock 实现 | UI 不依赖生成方式，后续替换 LLM 适配器 |
-| 测试 | 开发时按模块引入最小测试工具 | 优先验证状态、XP、存储与关键路径，本轮无依赖 |
+| 测试 | Vitest + jsdom + Testing Library | Step 2 验证快照与 Provider；XP 等到对应阶段再测 |
 | 后续能力 | Supabase Auth/数据库、服务端 LLM | 独立后续阶段；不提前实现接口路由和鉴权 |
 
-这些技术是计划选型，后续初始化时核对当时官方文档与兼容版本；本文不固定未经验证的软件版本，不宣称已搭好运行环境。
+已按官方安装说明手工初始化，保留原目录和历史，版本由 package-lock 固定。Next.js 16.4.2、React 19.3.1、TypeScript 6.0.3、Tailwind 4.3.3；后续升级仍需核对官方兼容说明。
 
 ## 2. 最小分层与目录建议
 
@@ -45,7 +45,7 @@ src/
 
 ## 3. 数据模型
 
-以下为模型契约示意，尚非代码实现。ID 使用 UUID，时间使用 ISO 字符串，顺序使用数组位置，不另存容易冲突的 order 字段。
+以下模型已在 `src/domain/types.ts` 建立，快照校验在 `src/domain/validation.ts`。ID 使用 UUID，时间使用 ISO 字符串，顺序使用数组位置，不另存容易冲突的 order 字段。
 
 | 实体 | 核心字段 | 关系与约束 |
 | --- | --- | --- |
@@ -156,3 +156,15 @@ interface Planner {
 | 用户路径 | 建角到完成目标；空状态、错误状态；键盘和移动布局 |
 
 后续代码模块按风险选择单元测试/集成测试与端到端检查；不为静态文案或简单视觉变动机械增加测试。每步的具体验收见路线图。
+
+## 10. Step 2 实际落地与范围说明
+
+- Repository 仍按约定使用 `load()` 与 `save(next, expectedRevision)`；无数据返回 null。Provider 在内存创建空快照，不自动覆盖存储。save 更新入口接受 updater，内部串行化、校验版本，成功后才发布状态。
+- 错误区分 invalid-json、invalid-data、unsupported-version、unavailable、write-failed、conflict；读取失败不进入业务默认状态，写失败不发布新快照。storage 事件与 revision 检查阻断已检测到的旧页写入。
+- 无第三方 schema 库：当前使用小型手写运行时校验，覆盖模型字段、标识/时间、引用、状态和流水一致性。草稿内容允许未填写，正式计划字段更严格，避免自动保存草稿被激活校验拦住。
+- `features/`、rules/progression、Planner 及业务命令尚未创建，等对应阶段再引入。Provider 不承担角色创建、任务完成或 XP 结算逻辑。
+- 基础 Button 采用 shadcn/ui 的 Slot/CVA 组合，Card 为项目可编辑源码，components.json 与 Tailwind tokens 已配置；视觉规范见 [DESIGN.md](DESIGN.md)。未引入复杂状态库、表单库或动画库。
+- 使用 Webpack 的唯一原因是本机 Turbopack 处理 CSS 的子进程连接失败，沙箱外重试同样复现；官方支持的 `next dev --webpack` / `next build --webpack` 均已验证。未改变产品架构或业务规则。
+- 首屏只展示无业务数据的骨架，加载/错误状态可见；自动建角路由守卫到 Step 3 再实现。本轮不把页面能访问视为业务功能完成。
+- 浏览器测试使用预装 Playwright 驱动独立 Chrome 无头进程，不依赖已登录个人浏览器；本机 Edge/Chrome 的交互控制连接不可用。临时截图与验收脚本保存在忽略的 `.qa/`，不提交个人环境路径。
+- 本轮 PRD 规则未改动；本轮没有 Supabase、LLM SDK 或任何远程数据写入业务实现。
