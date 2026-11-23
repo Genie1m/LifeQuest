@@ -1,0 +1,14 @@
+import {describe,it,expect,vi,afterEach} from 'vitest';
+import {readSupplierResponse,parsePlanningInput} from './server';
+import {CompatibleAdapter} from './compatible';
+import {defaultConnection} from './connection';
+import {EVALUATION_CASES} from './evaluation-cases';
+import {POST} from '@/app/api/planner/route';
+afterEach(()=>{vi.unstubAllEnvs();vi.restoreAllMocks();});
+describe('gateway failure diagnostics',()=>{
+ it('returns safe API diagnostics for a relay gateway failure',async()=>{vi.stubEnv('NODE_ENV','development');vi.stubEnv('LIFEQUEST_ENABLE_REAL_LLM','true');vi.spyOn(globalThis,'fetch').mockResolvedValue(new Response('private upstream content',{status:502}));const r=await POST(new Request('http://127.0.0.1:3000/api/planner',{method:'POST',headers:{host:'127.0.0.1:3000',origin:'http://127.0.0.1:3000','content-type':'application/json','x-lifequest-api-key':'fixture-not-real'},body:JSON.stringify({operation:'generate',provider:'compatible',connection:defaultConnection('compatible'),model:'gpt-6.1-sol',input:EVALUATION_CASES[0]})}));const body=await r.json();expect(r.status).toBe(502);expect(body).toMatchObject({code:'server',upstreamStatus:502});expect(body.requestId).toMatch(/^[0-9a-f-]{36}$/);expect(body.elapsedMs).toBeGreaterThanOrEqual(0);expect(JSON.stringify(body)).not.toContain('private');expect(JSON.stringify(body)).not.toContain('fixture-not-real');});
+ it.each([[502,'server'],[504,'timeout'],[401,'authentication'],[403,'model-access']] as const)('retains HTTP %s classification for an HTML error page',async(status,code)=>{await expect(readSupplierResponse(new Response('<html>private gateway details</html>',{status}))).rejects.toMatchObject({code,upstreamStatus:status});try{await readSupplierResponse(new Response('private',{status}));}catch(e){expect((e as Error).message).not.toContain('private');}});
+ it('rejects non-JSON successful responses',async()=>{await expect(readSupplierResponse(new Response('not-json'))).rejects.toMatchObject({code:'invalid-response'});});
+ it('does not retry failed relay generation or fake Mock success',async()=>{const request=vi.fn().mockResolvedValue(new Response('upstream proxy failure',{status:502}));await expect(new CompatibleAdapter('test-value','gpt-6.1-sol','compatible',defaultConnection('compatible'),request).generate(EVALUATION_CASES[0])).rejects.toMatchObject({code:'server',upstreamStatus:502});expect(request).toHaveBeenCalledTimes(1);});
+ it('accepts bounded draft context while rejecting oversized or extra instructions',()=>{expect(parsePlanningInput({...EVALUATION_CASES[0],currentPlan:'saved draft summary'}).currentPlan).toBe('saved draft summary');expect(()=>parsePlanningInput({...EVALUATION_CASES[0],currentPlan:'x'.repeat(2001)})).toThrow();expect(()=>parsePlanningInput({...EVALUATION_CASES[0],currentPlan:'x',xp:999})).toThrow();});
+});

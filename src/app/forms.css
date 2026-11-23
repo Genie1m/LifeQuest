@@ -1,0 +1,39 @@
+/* Step 3 controls share Arcane Indigo tokens; no new theme or animation layer. */
+.quest-card { padding: 28px; border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); min-width: 0; }
+.quest-card h2 { font-size: 22px; line-height: 1.5; font-weight: 600; margin: 0 0 12px; }
+.quest-card p { color: var(--text-secondary); margin: 0 0 20px; }
+.wrap-text, .page-heading h1, .page-heading p, .goal-facts dd { overflow-wrap: anywhere; }
+.goal-summary { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.creation-form { max-width: 900px; display: flex; flex-direction: column; gap: 28px; }
+.creation-form > button { align-self: flex-start; }
+.form-intro h2 { margin: 8px 0; }.form-intro p { margin-bottom: 0; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label, legend { font-weight: 600; font-size: 15px; }
+.field label span, legend span { color: var(--text-secondary); font-size: 13px; font-weight: 400; }
+.field input, .field textarea { width: 100%; min-height: 48px; border: 1px solid var(--border-control); border-radius: var(--radius-control); padding: 12px 14px; color: var(--text-primary); background: var(--background); font: inherit; font-size: 16px; }
+.field textarea { resize: vertical; }.field input::placeholder, .field textarea::placeholder { color: var(--text-secondary); opacity: 1; }
+.field input:focus-visible, .field textarea:focus-visible, .choice input:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 4px; }
+.field [aria-invalid="true"] { border-color: var(--danger-border); }
+.field small, .field-hint { color: var(--text-secondary); font-size: 13px; }
+.field-error { color: var(--danger) !important; font-size: 14px; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; } legend { padding: 0; margin-bottom: 8px; }
+.avatar-options { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; }
+.choice { border: 1px solid var(--border-control); border-radius: var(--radius-control); cursor: pointer; background: var(--background); padding: 16px 10px; min-width: 0; }
+.choice:hover { background: var(--surface-elevated); }.choice:has(input:checked) { background: var(--surface-selected); border-color: var(--secondary); box-shadow: inset 0 0 0 1px var(--secondary); }
+.choice:has(input:focus-visible) { outline: 3px solid var(--focus-ring); outline-offset: 4px; }
+.choice input { accent-color: var(--secondary); width: 18px; height: 18px; flex-shrink: 0; }
+.avatar-choice { display: flex; align-items: center; flex-direction: column; text-align: center; gap: 10px; }.avatar-choice input { align-self: flex-start; }
+.choice strong { font-size: 14px; font-weight: 600; }.choice small { display: block; color: var(--text-secondary); font-size: 12px; }
+.choice-mark { color: var(--secondary); font-size: 12px; }
+.role-avatar { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 76px; height: 76px; border-radius: 22px; background: var(--surface-selected); border: 1px solid var(--border-control); color: var(--secondary); }
+.direction-options { display: grid; gap: 10px; }.direction-choice { display: flex; align-items: center; gap: 14px; padding: 14px 18px; }.direction-choice strong small { display: inline; margin-left: 6px; }
+.local-notice { border-left: 3px solid var(--secondary); padding: 12px 16px; background: var(--surface-navigation); color: var(--text-secondary); font-size: 13px; border-radius: 0 8px 8px 0; }
+.empty-panel { text-align: center; padding: 44px 28px; }.empty-panel .feature-icon { margin-bottom: 20px; }.empty-panel p { max-width: 580px; margin-inline: auto; }
+.quest-section { margin-top: 28px; }.goal-list { display: grid; gap: 20px; }.action-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.character-identity { display: flex; align-items: center; gap: 20px; }.character-identity > div { min-width: 0; }.character-identity h2 { margin: 4px 0; }.character-identity p { margin: 0; font-size: 14px; }.xp-total { margin-left: auto; color: var(--reward); font-size: 28px; white-space: nowrap; }.xp-total small { font-size: 13px; }
+.xp-caption { display: flex; justify-content: space-between; gap: 12px; margin-top: 24px; font-size: 12px; color: var(--text-secondary); }.xp-track { display: block; width: 100%; height: 6px; appearance: none; margin: 10px 0 24px; border: 0; border-radius: 6px; background: var(--background); }.xp-track::-webkit-progress-bar { background: var(--background); border-radius: 6px; }.xp-track::-webkit-progress-value { background: var(--secondary); border-radius: 6px; }.xp-track::-moz-progress-bar { background: var(--secondary); }
+.ability-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 12px; margin-bottom: 20px; }.ability-grid > div { padding: 14px; text-align: center; background: var(--surface-navigation); border: 1px solid var(--border); border-radius: 10px; }.ability-grid span { font-size: 14px; }.ability-grid strong { display: block; font-size: 24px; color: var(--secondary); }.ability-grid small { color: var(--text-secondary); font-size: 12px; }.character-panel > p:last-child { margin-bottom: 0; }
+.goal-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 0 0 28px; }.goal-facts > div:nth-child(-n+2) { grid-column: 1/-1; }.goal-facts dt { color: var(--text-secondary); font-size: 13px; margin-bottom: 6px; }.goal-facts dd { margin: 0; white-space: pre-wrap; }.success-notice { border-color: var(--success); margin-bottom: 24px; }
+@media(max-width:1100px) { .avatar-options { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media(max-width:850px) { .ability-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }.character-identity { flex-wrap: wrap; }.xp-total { font-size: 24px; } }
+@media(max-width:600px) { .quest-card { padding: 24px 18px; }.quest-card h2 { font-size: 20px; }.avatar-options { grid-template-columns: repeat(2,minmax(0,1fr)); }.creation-form { gap: 24px; }.creation-form > button { width: 100%; }.character-identity { gap: 12px; }.character-identity .role-avatar { width: 60px; height: 60px; border-radius: 16px; }.xp-total { flex-basis: 100%; margin: 0; }.ability-grid { gap: 8px; }.ability-grid > div { padding: 10px 4px; }.goal-facts { grid-template-columns: 1fr; }.empty-panel { padding-block: 32px; } }

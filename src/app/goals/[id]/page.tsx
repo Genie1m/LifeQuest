@@ -1,5 +1,2 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <PlaceholderPage kind="goal" goalId={id} />;
-}
+import { GoalDetail } from "@/components/quest-pages";
+export default async function Page({ params }: { params: Promise<{ id: string }> }) { const { id } = await params; return <GoalDetail id={id} />; }

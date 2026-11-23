@@ -1,0 +1,25 @@
+{
+  "fixtureVersion": "replan-1.0.0",
+  "caseId": "REPLAN-5H-2H",
+  "synthetic": true,
+  "goal": "完成一个 AI 文献助手",
+  "successCriteria": "能够读取样例文献、回答问题、展示可追溯引用并通过基本测试",
+  "baseline": "了解 Python 和基础 Prompt",
+  "originalWeeklyHours": 5,
+  "requestedWeeklyHours": 2,
+  "remainingWeeks": 4,
+  "completed": [{"taskRef": "done-read", "deliverable": "已完成公开样例文献读取及文本提取", "completedAt": "2026-11-01T00:00:00.000Z"}],
+  "remaining": [
+    {"taskRef": "qa", "title": "建立问答最小流程", "minutes": 180, "required": true},
+    {"taskRef": "cite", "title": "展示并核对可追溯引用", "minutes": 180, "required": true},
+    {"taskRef": "tests", "title": "基本测试与失败行为验证", "minutes": 180, "required": true},
+    {"taskRef": "polish", "title": "界面美化与批量文献支持", "minutes": 240, "required": false}
+  ],
+  "expected": {
+    "remainingRequiredMinutes": 540,
+    "newCapacityMinutes": 480,
+    "minimumRequiredWeeks": 5,
+    "mustPreserve": ["goal.successCriteria", "completed", "existing IDs", "completion ledger", "XP"],
+    "mustNot": ["scale all task times by 2/5", "silently drop citations or tests", "apply without confirmation", "modify active plan in this iteration"]
+  }
+}

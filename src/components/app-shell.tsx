@@ -25,9 +25,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="sidebar-bottom"><Sparkles size={20} aria-hidden="true" /><p>每一次行动，<br />都在塑造你的角色。</p><div className="sidebar-rule" /><span>本机冒险者</span><small>档案仅保存在当前浏览器</small></div>
     </aside>
     <div className="workspace">
-      <header className="topbar"><Link href="/" className="mobile-brand" aria-label="LifeQuest 冒险首页"><Sparkles size={20} aria-hidden="true" />LifeQuest</Link><div className="chapter-label"><span className="chapter-dot" />序章 <span className="topbar-separator">/</span> 冒险的起点</div><LocalStatus /></header>
+      <header className="topbar"><Link href="/" className="mobile-brand" aria-label="LifeQuest 冒险首页"><Sparkles size={20} aria-hidden="true" />LifeQuest</Link><div className="chapter-label"><span className="chapter-dot" />序章 <span className="topbar-separator">/</span> 冒险的起点</div><Link className="text-link" href="/settings/models">模型设置</Link><LocalStatus /></header>
       <main id="main-content" tabIndex={-1}><StorageFeedback />{children}</main>
-      <footer className="footer"><span>LifeQuest · 将成长写成你的故事</span><span>演示规划器，未接入真实 AI <ArrowUpRight size={13} aria-hidden="true" /></span></footer>
+      <footer className="footer"><span>LifeQuest · 将成长写成你的故事</span><span>本机保存 · AI 建议由你审核 <ArrowUpRight size={13} aria-hidden="true" /></span></footer>
     </div>
   </div>;
 }

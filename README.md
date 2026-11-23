@@ -1,88 +1,98 @@
-# LifeQuest
+# LifeQuest · 把成长目标变成一场冒险
 
-将现实目标转化为用户自主掌控的成长冒险。当前为 **Step 2.5：Arcane Indigo 设计优化与工程健康复核**，等待人工验收，尚未开始 Step 3。
+**一款结合AI规划与RPG角色成长的个人目标管理产品。**
 
-当前可浏览基础导航、7 个路由和统一占位页面；尚未实现角色/目标创建、计划编辑、Mock Planner、任务执行或 XP 结算。没有真实 AI、账号或数据库。
+从“想做什么”到“今天做什么”，LifeQuest帮助用户拆解现实目标、执行具体任务，并在时间和状态变化时调整路线。每一次行动，都能在任务进度和角色成长中得到反馈。
 
-## 安装与启动
+![LifeQuest冒险首页：角色、等级与成长进度](docs/media/adventure-dashboard.png)
 
-要求 Node.js 22.17.0 或更高版本，以及 npm。已在 Windows / Node 22.17.0 / npm 10.9.2 验证。
+## 我在这个项目中做了什么
 
-```powershell
-cd D:\SCNU\aipm_project\lifequest
+围绕“目标难拆解、行动难持续、计划跟不上变化”三个问题，完成产品定义、用户流程、交互设计、AI规划方案与评测体系设计，并借助AI辅助开发将方案落地为可交互Web产品。
+
+| 产品工作 | 具体落地 |
+| --- | --- |
+| 需求分析与范围取舍 | 聚焦个人成长场景，围绕目标、计划、执行、反馈建立主流程；用3条活跃目标与1条重点帮助用户分配注意力 |
+| AI功能设计 | 将成功标准、已有基础、时间预算和资源限制纳入规划输入，设计建议审核、用户编辑与正式确认流程 |
+| 游戏化机制 | 将任务完成与XP、等级、方向成长和成就关联，形成可追溯的成长反馈 |
+| 复杂流程设计 | 支持时间预算变化后的方案调整，联动任务范围、估时与完成标准，提供前后差异审核 |
+| AI效果评估 | 设计60组固定场景、8项质量标准，将程序结构检查和人工内容评分结合，建立首次生成的评价口径 |
+
+## 产品体验
+
+### 让下一步足够具体
+
+用户填写成长目标、当前基础、成功标准和每周投入，AI给出章节与任务建议。每项任务包含行动说明、预计投入和完成条件；用户可以修改、增删和排序，确认后开启冒险。
+
+**目标输入 → AI路线 → 用户审核与编辑 → 确认执行 → 成长反馈 → 调整后续计划**
+
+### 让行动看得见
+
+完成任务后，任务地图更新进度，并显示本次XP、方向成长和成就反馈。角色等级与成长流水相互关联，用户能回看每一次进步来自哪项行动。
+
+![任务完成后的进度、XP与章节反馈](docs/media/task-growth-desktop.png)
+
+三种职业提供不同的角色形象与冒险氛围：知识法师、探索游侠、创造工匠。用户按喜好选择角色，自主决定现实目标与成长方向。
+
+### 让计划适应生活的变化
+
+当每周准备时间从5小时变成2小时，用户可输入新预算、执行反馈和待调整任务。系统计算剩余工作与可用时间，提供延期或后移可选工作的选择；修改任务后，通过差异对照确认新方案，已有成果与XP持续保留。
+
+<img src="docs/media/replan-budget-mobile.png" alt="移动端重规划：任务范围选择与预算缺口提示" width="300" />
+
+## 一个重点产品案例：5小时变2小时
+
+文献助手项目还剩问答、引用和测试等核心工作。调整的关键在于重新安排交付范围和节奏：先识别必须保留的能力，再处理可推迟的美化与批量支持，最后核对任务行动、估时和验收条件。
+
+这套方案将时间变化转化为用户能够理解和选择的取舍，并把选择落实到具体任务。[阅读产品案例](docs/PORTFOLIO.md)
+
+## AI质量如何衡量
+
+围绕编程学习、AI项目、面试准备、运动习惯和创作实践，建立**60组固定合成输入、8项质量标准**，覆盖不同基础、预算、偏好和资源条件。程序检查结构与领域导入，内容按7项锚点逐项评分，人工与AI辅助结果分别记录。
+
+| 本次真实中转评测 | 结果 |
+| --- | ---: |
+| 首次取得合法计划 | 41/60（68.3%） |
+| 首次AI参考合格 | 30/60（50.0%） |
+| 补跑后AI参考合格 | 44/60（73.3%） |
+
+补跑后60份计划均通过结构校验，累计81次请求。内容分数来自AI辅助评审，人工复核待开展。[查看完整结果、逐份计划与评分依据](docs/AI_EVAL_RESULTS.md)
+
+运行工具逐条保存首次生成结果、延迟与Token，自动整理成Excel，支持查看计划、记录问题和回导评分。评测识别出新手前置不足、周期算术和成果遗漏，下一步优先改善任务支架、确定性预算核算与首轮超时体验。[查看AI规划与评测设计](docs/AI_PLANNER.md)
+
+规划围绕“成果覆盖、单次行动、完成验收、阶段承接”组织。审核区对照用户原始要求，定位长任务、验收缺口与实践周期；页面与评测共用检查规则，内容质量继续由逐项评分判断。
+
+## 进一步了解
+
+| 文档 | 内容 |
+| --- | --- |
+| [产品案例](docs/PORTFOLIO.md) | 问题定义、方案取舍与重点场景 |
+| [产品需求](docs/PRD.md) | 用户流程、功能设计与业务规则 |
+| [AI规划与评测](docs/AI_PLANNER.md) | 模型接入、建议生成和质量评价 |
+| [AI评测结果](docs/AI_EVAL_RESULTS.md) | 固定60组的实际表现、问题与完整证据 |
+| [视觉与交互](docs/DESIGN.md) | Arcane Indigo、人物身份与成长反馈 |
+| [产品架构](docs/ARCHITECTURE.md) | 草稿、执行计划、成长记录与数据流 |
+| [阅读导航](docs/INDEX.md) | 产品材料与代码入口 |
+
+## 本地体验
+
+技术栈：Next.js App Router、React、TypeScript、Tailwind CSS、shadcn/ui；本地快照存储与可替换模型Adapter。
+
+```bash
 npm ci
 npm run dev
 ```
 
-打开 [本地开发站点](http://127.0.0.1:3000)。首次安装需要访问 npm registry；若当前镜像无法访问，可对安装命令指定 `--registry=https://registry.npmjs.org`，无需修改全局 npm 配置。
+打开 http://127.0.0.1:3000 。使用真实模型时，在Git Bash运行 `LIFEQUEST_ENABLE_REAL_LLM=true npm run dev`，进入模型设置选择服务商、模型并输入自己的API Key。数据保存在当前浏览器，Key在当前会话使用。
 
-```powershell
-npm run typecheck
+需要Node.js 22.17或以上。真实模型请求经本机服务端转发；当前服务以本机体验为范围，生产构建关闭模型代理。可用Mock或手动路径体验计划审核、执行与成长。
+
+```bash
 npm run lint
 npm test
 npm run build
-npm start
+npm run typecheck
+node scripts/check-portfolio.mjs
 ```
 
-`npm start` 在生产构建完成后启动本机站点。开发与生产服务默认均使用 3000 端口，不要同时启动。停止服务按 Ctrl+C。
-
-开发和构建显式使用 Next.js 官方支持的 `--webpack`。Step 2 曾遇到 Turbopack CSS 子进程连接失败；本轮直接 Turbopack 生产构建已通过，旧错误未复现，但根因尚未确认，默认方案暂不切换。Webpack 已再次验证，没有关闭检查或忽略构建错误；环境证据见 [工程报告](docs/ENGINEERING_HEALTH.md)。
-
-实际版本由 `package-lock.json` 固定：Next.js 16.4.2、React 19.3.1、TypeScript 6.0.3、Tailwind 4.3.3。shadcn/ui 按手工安装方式配置，只纳入 Button/Card 与必要工具；Lucide 提供图标，不预装整套组件。
-
-## 项目结构
-
-```text
-docs/                  产品、架构、路线图、设计规范
-src/app/               App Router、布局、CSS、占位页面与错误边界
-src/components/        应用导航、反馈、占位内容与基础 UI
-src/domain/            领域类型、快照运行时校验；无业务命令
-src/services/          Repository 接口与 localStorage 实现
-src/state/             AppProvider、初始化与串行保存入口
-src/test/              测试初始化与仅测试使用的快照夹具
-AGENTS.md              长期开发、验收与 Git 约束
-```
-
-路由：`/`、`/onboarding`、`/goals`、`/goals/new`、`/goals/[id]`、`/goals/[id]/plan`、`/character`。不存在的目标显示“未找到这个目标”；未知页面提供返回入口。Step 2 不自动跳转建角页，保留骨架浏览，首次用户引导将在 Step 3 实现。
-
-## 本地状态
-
-- 唯一 key：`lifequest:state`，schemaVersion=1。首次空加载仅创建内存空状态，不自动写数据。
-- 服务端及客户端首次渲染均为 loading，挂载后才访问 localStorage。
-- 使用 `useAppState()` 获取状态、`reload()` 重新读取，`save(update)` 串行提交快照；保存成功后才更新内存，并自动递增全局 revision。
-- 损坏 JSON、无效字段、不支持版本、引用不一致均显示错误，保留原始 key，禁止默认空数据覆盖。存储失败保留最后成功状态；本轮没有用户输入表单。
-- 每次写入校验 expectedRevision；收到其他标签页的存储变更后冻结保存，需明确重新读取。此机制不提供多标签页原子事务保证。
-- 草稿校验允许尚未填写的标题与空阶段，正式计划更严格；确认/编辑权限及 XP 命令留到对应阶段。
-- 清除浏览器数据、换设备或变更站点来源会影响数据可用性。Git 不保存 localStorage；请勿通过清空数据解决异常。
-
-## GitHub 与验收流程
-
-远程已关联到你的私有仓库 [Genie1m/LifeQuest](https://github.com/Genie1m/LifeQuest)。通过 GitHub 连接器核实账号、仓库名称、私有可见性及管理员权限后关联；复用了已有仓库，没有重复创建。
-
-- `main` 保留 Step 1 已验收规划提交 `f327cfe`；Step 2 与 Step 2.5 的开发只在本地 `dev` 提交。
-- 每模块先检查/测试，再按明确文件路径暂存和 commit；阶段结束报告并等待验收。
-- **未经用户明确批准，不 push、不创建远程分支、不创建 PR、不远程合并。** 本轮没有推送代码。
-- AGENTS 与文档记录的是协作约束，未配置 GitHub 服务端分支保护，不能宣称为平台强制权限机制。
-- 发布批准后先核对批准的 commit、远程归属和 `main` 分支；首次 fetch 并检查远程历史，仅纳入批准提交。发生冲突停止报告，不强推。
-
-GitHub 连接器已认证，但本机仍无法使用 `gh`，`gh auth status` 未能执行。**连接器认证不等于本机命令行已认证。** 首次批准推送前，可使用官方 WinGet 或 MSI 安装方式，重新打开 PowerShell 后在自己的终端执行浏览器认证：
-
-```powershell
-winget install --id GitHub.cli --exact --source winget
-# 安装完成后重新打开 PowerShell，再执行以下命令
-gh --version
-gh auth login --hostname github.com --git-protocol https --web
-gh auth status
-gh auth setup-git
-```
-
-请在官方浏览器页面自行完成登录，不在聊天、项目文件或命令参数中粘贴 Token/密码/私钥。认证本身不代表批准推送。参考：[GitHub 官方认证说明](https://cli.github.com/manual/gh_auth_login)。本轮未安装或执行认证，未修改远程设置；main 的保护建议及私有仓库套餐限制见 [工程报告](docs/ENGINEERING_HEALTH.md)。
-
-## 检查结果与限制
-
-- 类型检查、ESLint（0 警告）、23 项自动测试、最终 Webpack 生产构建已通过；Turbopack 直接构建本轮也成功，保留旧问题待复现而非宣称根因修复。
-- Chrome 独立无头上下文检查 1440/390/320px 下的 7 个路由、导航、实际字体/字号、Hover/Focus/Disabled、移动底栏遮挡、减少动态效果及损坏数据保留；无横向溢出，未捕获页面异常或 console error。测试未访问个人浏览器数据。
-- 设计为 Arcane Indigo，语义色、布局、字体和 9 组对比度结果见 DESIGN.md。截图位于忽略的 `.qa/step25-*.png`；开发侧已查看，用户视觉验收仍待完成。未验证完整 WCAG、Edge、Safari、真实手机、屏幕阅读器或完整 MVP 路径。
-- 本轮重新审计并最终复核，production 为 0，全量为 5 High，属于同一 braces 公告的开发依赖传播链；未证明当前站点有可利用的网络入口。未发现可靠兼容修复，依赖和锁文件未修改。具体公告、版本、风险、拒绝的跨主版本修复和复查建议见 ENGINEERING_HEALTH.md。
-
-产品基准：[PRD](docs/PRD.md) · [架构](docs/ARCHITECTURE.md) · [路线图与本轮记录](docs/ROADMAP.md) · [设计规范](docs/DESIGN.md) · [工程健康报告](docs/ENGINEERING_HEALTH.md)。验收 Step 2.5 后再授权 Step 3，不自动开始业务开发或远程发布。
+页面配图来自运行中的产品，使用独立示例档案展示交互。源码、领域测试、固定输入和精选评测证据随仓库提供；本机档案、Key、原始运行日志与过程归档不在当前发布文件中。

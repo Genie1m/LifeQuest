@@ -1,0 +1,10 @@
+{
+  "provider": "compatible",
+  "model": "gpt-6.1-sol",
+  "origin": "http://127.0.0.1:3000",
+  "connection": {
+    "baseUrl": "https://api.aicodemirror.ai/v1",
+    "protocol": "responses",
+    "outputMode": "json_schema"
+  }
+}

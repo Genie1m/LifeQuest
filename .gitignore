@@ -10,3 +10,16 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 .qa/
+~$*.xlsx
+# Publish curated evidence; generated workbooks and raw batches stay local.
+/docs/evals/*
+!/docs/evals/README.md
+!/docs/evals/RESULTS.json
+/docs/archive/
+/docs/*_ACCEPTANCE.md
+/docs/ENGINEERING_HEALTH.md
+/docs/REPOSITORY_HYGIENE.md
+*.inspect.ndjson
+*.har
+/test-results/
+/playwright-report/

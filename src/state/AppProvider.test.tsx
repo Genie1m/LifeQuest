@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { AppProvider, useAppState } from "./AppProvider";
 import { emptySnapshot } from "@/domain/types";
@@ -9,7 +9,7 @@ import { RepositoryError, STORAGE_KEY, type Repository } from "@/services/reposi
 let context: ReturnType<typeof useAppState>;
 function Probe() {
   const state = useAppState();
-  useEffect(() => { context = state; }, [state]);
+  useLayoutEffect(() => { context = state; }, [state]);
   return <div><span>{state.status}</span><span>revision:{state.snapshot?.revision ?? "none"}</span>{state.error && <p role="alert">{state.error.code}</p>}</div>;
 }
 function repository(): Repository { return { load: vi.fn().mockResolvedValue(null), save: vi.fn().mockResolvedValue(undefined) }; }
@@ -21,7 +21,7 @@ describe("AppProvider", () => {
   it("initializes an empty ready snapshot without automatically saving", async () => {
     const repo = repository(); render(<AppProvider repository={repo}><Probe /></AppProvider>);
     expect(screen.getByText("loading")).toBeInTheDocument(); await screen.findByText("ready");
-    expect(context.snapshot).toEqual(emptySnapshot()); expect(repo.save).not.toHaveBeenCalled();
+    await waitFor(() => expect(context.snapshot).toEqual(emptySnapshot())); expect(repo.save).not.toHaveBeenCalled();
   });
   it("initializes an existing valid snapshot", async () => {
     const repo = repository(); vi.mocked(repo.load).mockResolvedValue(draftFixture());

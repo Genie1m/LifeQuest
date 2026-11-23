@@ -1,2 +1,2 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
-export default function Page() { return <PlaceholderPage kind="new-goal" />; }
+import { GoalCreationForm } from "@/components/creation-forms";
+export default function Page() { return <GoalCreationForm />; }

@@ -1,2 +1,2 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
-export default function Page() { return <PlaceholderPage kind="onboarding" />; }
+import { OnboardingForm } from "@/components/creation-forms";
+export default function Page() { return <OnboardingForm />; }

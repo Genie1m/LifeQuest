@@ -1,0 +1,95 @@
+{
+  "source": "Built-in image_gen, based on the user-approved LifeQuest cast",
+  "approval": "2026-10-20: user approved style and main designs; retain identity and simplify small details",
+  "version": "step-3.6-a-v1",
+  "characters": {
+    "mage": {
+      "version": "a-v1",
+      "full": {
+        "small": "/characters/scholar-mage/a-v1/full-480-b4e30ce8d223.webp",
+        "large": "/characters/scholar-mage/a-v1/full-768-5e29a30fac33.webp",
+        "width": 768,
+        "height": 960
+      },
+      "portrait": {
+        "small": "/characters/scholar-mage/a-v1/portrait-128-0c7718e49541.webp",
+        "large": "/characters/scholar-mage/a-v1/portrait-256-5bf88cc87536.webp",
+        "width": 256,
+        "height": 256
+      },
+      "provenance": {
+        "source": "assets/characters/source/approved-cast.png",
+        "sha256": "27c4d2555c0b910634acf832a730ec6e09cb8f5b079d32ae3228d0858889db4c",
+        "fullCrop": {
+          "left": 37,
+          "top": 19,
+          "width": 572,
+          "height": 849
+        },
+        "portraitCrop": {
+          "left": 235,
+          "top": 10,
+          "width": 300,
+          "height": 300
+        }
+      }
+    },
+    "ranger": {
+      "version": "a-v1",
+      "full": {
+        "small": "/characters/pathfinder/a-v1/full-480-ce8d546b8128.webp",
+        "large": "/characters/pathfinder/a-v1/full-768-a49c5a56c24e.webp",
+        "width": 768,
+        "height": 960
+      },
+      "portrait": {
+        "small": "/characters/pathfinder/a-v1/portrait-128-5c9b03fa32de.webp",
+        "large": "/characters/pathfinder/a-v1/portrait-256-feb2d9f18e8f.webp",
+        "width": 256,
+        "height": 256
+      },
+      "provenance": {
+        "source": "assets/characters/source/approved-cast.png",
+        "sha256": "27c4d2555c0b910634acf832a730ec6e09cb8f5b079d32ae3228d0858889db4c",
+        "fullCrop": {
+          "left": 625,
+          "top": 10,
+          "width": 587,
+          "height": 856
+        },
+        "portraitCrop": {
+          "left": 770,
+          "top": 5,
+          "width": 320,
+          "height": 320
+        }
+      }
+    },
+    "artisan": {
+      "version": "a-v1",
+      "full": {
+        "small": "/characters/artificer/a-v1/full-480-f3123ef6b12d.webp",
+        "large": "/characters/artificer/a-v1/full-768-9bd450ea4339.webp",
+        "width": 768,
+        "height": 960
+      },
+      "portrait": {
+        "small": "/characters/artificer/a-v1/portrait-128-11b1a8f0c811.webp",
+        "large": "/characters/artificer/a-v1/portrait-256-7293847faf34.webp",
+        "width": 256,
+        "height": 256
+      },
+      "provenance": {
+        "source": "assets/characters/source/artificer-a.png",
+        "sha256": "cd6f09d05edf6167edcef27d0db35d21b4db2024db4956873bc891b12c1673a2",
+        "fullCrop": "transparent bounds",
+        "portraitCrop": {
+          "left": 400,
+          "top": 0,
+          "width": 420,
+          "height": 420
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { SCHEMA_VERSION, type AppSnapshot, type PlanContent } from "./types";
+import { SCHEMA_VERSION, TASK_PROGRESS_LABELS, type AppSnapshot, type PlanContent, type Goal, type Character } from "./types";
 
 export class SnapshotValidationError extends Error {
   constructor(public readonly code: "invalid-data" | "unsupported-version", message: string) {
@@ -29,9 +29,16 @@ function enumeration(value: unknown, allowed: readonly string[], path: string) {
 }
 const directions = ["knowledge", "vitality", "creativity", "action", "social"];
 const difficulties = ["light", "standard", "challenge"];
+function replanSettings(raw:unknown,goal:Goal,draft:boolean){
+ const r=object(raw,'replan');requireValue(typeof r.weeklyHours==='number'&&Number.isFinite(r.weeklyHours)&&r.weeklyHours>=1&&r.weeklyHours<=40,'replan.weeklyHours');integer(r.windowWeeks,'replan.windowWeeks',1,520);text(r.feedback,'replan.feedback',1000);enumeration(r.strategy,['extend','defer'],'replan.strategy');
+ const tasks=goal.confirmedPlan!.content.stages.flatMap(s=>s.tasks);
+ if(r.requestedWeeks!==undefined)integer(r.requestedWeeks,'replan.requestedWeeks',1,520);
+ for(const key of ['selectedTaskIds','deferredTaskIds']){const list=r[key];requireValue(Array.isArray(list)&&list.length<=50&&new Set(list).size===list.length,'replan.ids');for(const id of list){uuid(id,'replan.taskId');requireValue(tasks.some(t=>t.id===id&&(!draft||t.status==='pending')),'replan.owner');}}
+ requireValue((r.selectedTaskIds as string[]).length>0&&(r.deferredTaskIds as string[]).every(id=>(r.selectedTaskIds as string[]).includes(id))&&(r.strategy!=='extend'||(r.deferredTaskIds as string[]).length===0),'replan.scope');
+}
 
 // Drafts intentionally permit unfinished text/empty stages; activation validation is stricter.
-function plan(value: unknown, path: string, confirmed: boolean) {
+function plan(value: unknown, path: string, confirmed: boolean, replan = false) {
   const content = object(value, path);
   requireValue(Array.isArray(content.stages) && content.stages.length <= 10 && (!confirmed || content.stages.length > 0), `${path}.stages`);
   const ids = new Set<string>();
@@ -44,6 +51,10 @@ function plan(value: unknown, path: string, confirmed: boolean) {
     const p = `${path}.stages[${index}]`; const stage = object(raw, p); unique(stage.id);
     text(stage.title, `${p}.title`, 80, confirmed); text(stage.milestone, `${p}.milestone`, 500, false);
     requireValue(Array.isArray(stage.tasks) && (!confirmed || stage.tasks.length > 0), `${p}.tasks`);
+    if (stage.checkpointTaskId !== undefined) {
+      uuid(stage.checkpointTaskId, `${p}.checkpointTaskId`);
+      requireValue(stage.tasks.some(raw => object(raw, p).id === stage.checkpointTaskId), `${p}.checkpointTaskId.owner`);
+    }
     count += stage.tasks.length;
     stage.tasks.forEach((rawTask, taskIndex) => {
       const t = `${p}.tasks[${taskIndex}]`; const task = object(rawTask, t); unique(task.id);
@@ -54,12 +65,18 @@ function plan(value: unknown, path: string, confirmed: boolean) {
       enumeration(task.status, ["pending", "completed"], `${t}.status`);
       if (task.status === "completed") date(task.completedAt, `${t}.completedAt`);
       else requireValue(task.completedAt === undefined, `${t}.completedAt`);
+      if (task.progress !== undefined) {
+        requireValue((confirmed || replan) && task.status === 'pending', `${t}.progress.owner`);
+        const progress = object(task.progress, `${t}.progress`);
+        enumeration(progress.status, Object.keys(TASK_PROGRESS_LABELS), `${t}.progress.status`);
+        text(progress.note, `${t}.progress.note`, 1000, progress.status === 'blocked');
+      }
     });
   });
   requireValue(count <= 50, `${path}.taskCount`);
 }
 
-/** Decode only validated v1 data. Never repairs or removes the original storage value. */
+/** Decode only validated v2 data. Never repairs or removes the original storage value. */
 export function parseSnapshot(value: unknown): AppSnapshot {
   const snapshot = object(value, "snapshot");
   if (snapshot.schemaVersion !== SCHEMA_VERSION) {
@@ -74,9 +91,14 @@ export function parseSnapshot(value: unknown): AppSnapshot {
     const character = object(snapshot.character, "character"); uuid(character.id, "character.id");
     requireValue(character.profileId === profile.id, "character.profileId");
     text(character.name, "character.name", 20); text(character.avatarId, "character.avatarId", 80); date(character.createdAt, "character.createdAt");
+    requireValue((character.classId === undefined) === (character.appearanceId === undefined), "character.class/appearance");
+    if (character.classId !== undefined) {
+      enumeration(character.classId, ["scholar-mage", "pathfinder", "artificer"], "character.classId");
+      requireValue(character.appearanceId === `${character.classId}-a-v1`, "character.appearanceId");
+    }
   } else requireValue(snapshot.goals.length === 0 && snapshot.completions.length === 0, "orphaned-data");
 
-  const goalIds = new Set<string>(); const formalIds = new Set<string>(); let unfinished = 0;
+  const goalIds = new Set<string>(); const formalIds = new Set<string>(); let active = 0;
   snapshot.goals.forEach((raw, index) => {
     const p = `goals[${index}]`; const goal = object(raw, p); uuid(goal.id, `${p}.id`);
     requireValue(!goalIds.has(goal.id as string), `${p}.duplicateId`); goalIds.add(goal.id as string);
@@ -84,8 +106,8 @@ export function parseSnapshot(value: unknown): AppSnapshot {
     text(goal.title, `${p}.title`, 80); text(goal.successCriteria, `${p}.successCriteria`, 500);
     text(goal.baseline, `${p}.baseline`, 500); enumeration(goal.direction, directions, `${p}.direction`);
     requireValue(typeof goal.weeklyHours === "number" && Number.isFinite(goal.weeklyHours) && goal.weeklyHours >= 1 && goal.weeklyHours <= 40, `${p}.weeklyHours`);
-    enumeration(goal.status, ["draft", "active", "completed"], `${p}.status`); date(goal.createdAt, `${p}.createdAt`);
-    if (goal.status !== "completed") unfinished++;
+    enumeration(goal.status, ["draft", "active", "paused", "completed"], `${p}.status`); date(goal.createdAt, `${p}.createdAt`);
+    if (goal.status === "active") active++;
     if (goal.status === "completed") date(goal.completedAt, `${p}.completedAt`);
     else requireValue(goal.completedAt === undefined, `${p}.completedAt`);
     if (goal.confirmedPlan !== undefined) {
@@ -94,6 +116,8 @@ export function parseSnapshot(value: unknown): AppSnapshot {
       plan(execution.content, `${p}.confirmedPlan.content`, true);
       requireValue(goal.status !== "draft", `${p}.draft-with-confirmed-plan`);
       const content = execution.content as PlanContent;
+      if(execution.adjustment!==undefined)replanSettings(execution.adjustment,goal as unknown as Goal,false);
+      if(execution.adjustmentReview!==undefined){requireValue(execution.adjustment!==undefined,'adjustmentReview.owner');text(execution.adjustmentReview,'adjustmentReview',1000);}
       for (const stage of content.stages) for (const id of [stage.id, ...stage.tasks.map(t => t.id)]) {
         requireValue(!formalIds.has(id), `${p}.duplicateFormalId`); formalIds.add(id);
       }
@@ -107,12 +131,25 @@ export function parseSnapshot(value: unknown): AppSnapshot {
       enumeration(draft.source, ["manual", "mock"], `${p}.draft.source`); date(draft.updatedAt, `${p}.draft.updatedAt`);
       if (draft.proposedWeeklyHours !== undefined) requireValue(typeof draft.proposedWeeklyHours === "number" && Number.isFinite(draft.proposedWeeklyHours) && draft.proposedWeeklyHours >= 1 && draft.proposedWeeklyHours <= 40, `${p}.draft.proposedWeeklyHours`);
       if (draft.adjustmentFeedback !== undefined) text(draft.adjustmentFeedback, `${p}.draft.adjustmentFeedback`, Number.MAX_SAFE_INTEGER, false);
-      plan(draft.content, `${p}.draft.content`, false);
+      plan(draft.content, `${p}.draft.content`, false, draft.replan !== undefined);
+      if(draft.replan!==undefined){requireValue(goal.confirmedPlan!==undefined,'replan.formal');replanSettings(draft.replan,goal as unknown as Goal,true);requireValue(draft.proposedWeeklyHours===object(draft.replan,'replan').weeklyHours,'replan.budget');}
       requireValue(goal.status !== "completed", `${p}.completed-with-draft`);
     } else requireValue(goal.status !== "draft", `${p}.missing-draft`);
   });
-  requireValue(unfinished <= 1, "one-unfinished-goal");
+  requireValue(active <= 3, "active-limit");
+  if (snapshot.focusGoalId !== undefined) {
+    uuid(snapshot.focusGoalId, "focusGoalId");
+    requireValue((snapshot.goals as Goal[]).some(g => g.id === snapshot.focusGoalId && g.status === "active" && g.characterId === (snapshot.character as Character | undefined)?.id), "focusGoalId.active-owner");
+  }
 
+  const owners = new Map<string, string>();
+  for (const raw of snapshot.goals) {
+    const goal = raw as Goal;
+    for (const content of [goal.confirmedPlan?.content, goal.draft?.content]) for (const stage of content?.stages ?? []) for (const id of [stage.id, ...stage.tasks.map(t => t.id)]) {
+      requireValue(!goalIds.has(id) && (!owners.has(id) || owners.get(id) === goal.id), "cross-goal-plan-id");
+      owners.set(id, goal.id);
+    }
+  }
   const data = value as AppSnapshot; const settled = new Set<string>();
   data.completions.forEach((entry, index) => {
     const p = `completions[${index}]`; object(entry, p);

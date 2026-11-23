@@ -1,0 +1,40 @@
+import { ModelSessionProvider } from "@/state/ModelSession";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { describe,it,expect,vi } from "vitest";
+import { AppProvider } from "@/state/AppProvider";
+import { GoalEditor } from "./plan-editor";
+import { draftFixture } from "@/test/fixtures";
+import { readyDraft } from "@/test/multi-fixtures";
+import { RepositoryError, type Repository } from "@/services/repository";
+vi.mock('next/navigation',()=>({useRouter:()=>({push:vi.fn()})}));
+function repository():Repository{return {load:vi.fn().mockResolvedValue(draftFixture()),save:vi.fn().mockResolvedValue(undefined)};}
+describe('plan editor',()=>{
+  it('inserts an adjacent split task and asks for independent estimates and criteria before saving',async()=>{
+    const data=draftFixture();
+    data.goals=[readyDraft(1)];
+    const repo=repository();
+    vi.mocked(repo.load).mockResolvedValue(data);
+    render(<ModelSessionProvider><AppProvider repository={repo}><GoalEditor id={data.goals[0].id}/></AppProvider></ModelSessionProvider>);
+    fireEvent.click(await screen.findByRole('button',{name:'拆分任务：任务 1'}));
+    const [,title]=screen.getAllByLabelText('真实任务标题');
+    const [,criteria]=screen.getAllByLabelText('完成标准');
+    const [,minutes]=screen.getAllByLabelText('预计投入（分钟）');
+    expect(title).toHaveFocus();
+    expect(minutes).toHaveValue(null);
+    fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+    expect(repo.save).not.toHaveBeenCalled();
+    fireEvent.change(title,{target:{value:'核对交付文件'}});
+    fireEvent.change(criteria,{target:{value:'打开文件确认包含两份结果'}});
+    fireEvent.change(minutes,{target:{value:'20'}});
+    fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+    await waitFor(()=>expect(repo.save).toHaveBeenCalledTimes(1));
+    const tasks=vi.mocked(repo.save).mock.calls[0][0].goals[0].draft!.content.stages[0].tasks;
+    expect(tasks[0]).toEqual(data.goals[0].draft!.content.stages[0].tasks[0]);
+    expect(tasks[1]).toMatchObject({title:'核对交付文件',estimatedMinutes:20,doneCriteria:'打开文件确认包含两份结果',status:'pending'});
+  });
+  it('cancels internal navigation before router handlers and warns on unload',async()=>{vi.spyOn(window,'confirm').mockReturnValue(false);const repo=repository();render(<ModelSessionProvider><AppProvider repository={repo}><GoalEditor id={draftFixture().goals[0].id} metadata/></AppProvider></ModelSessionProvider>);fireEvent.change(await screen.findByLabelText('目标名称'),{target:{value:'尚未保存'}});expect(fireEvent.click(screen.getByRole('link',{name:'返回目标详情'}))).toBe(false);expect(window.confirm).toHaveBeenCalled();const event=new Event('beforeunload',{cancelable:true});window.dispatchEvent(event);expect(event.defaultPrevented).toBe(true);});
+  it('retains unsaved plan input on failure and does not publish a partial plan',async()=>{const s=draftFixture();s.goals=[readyDraft(1)];const repo=repository();vi.mocked(repo.load).mockResolvedValue(s);vi.mocked(repo.save).mockRejectedValueOnce(new RepositoryError('write-failed','quota'));render(<ModelSessionProvider><AppProvider repository={repo}><GoalEditor id={s.goals[0].id}/></AppProvider></ModelSessionProvider>);const title=await screen.findByLabelText('真实任务标题');fireEvent.change(title,{target:{value:'失败后保留的任务'}});fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));await screen.findByText(/保存失败，输入仍保留/);expect(title).toHaveValue('失败后保留的任务');expect(s.goals[0].draft!.content.stages[0].tasks[0].title).toBe('任务 1');fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));await screen.findByText(/已保存。刷新/);});
+  it('retains invalid user input, focuses task and allows repair',async()=>{const repo=repository();const s=draftFixture();s.goals=[readyDraft(1)];vi.mocked(repo.load).mockResolvedValue(s);render(<ModelSessionProvider><AppProvider repository={repo}><GoalEditor id={s.goals[0].id}/></AppProvider></ModelSessionProvider>);const criteria=await screen.findByLabelText('完成标准');fireEvent.change(criteria,{target:{value:''}});fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));await screen.findByRole('status');expect(criteria).toHaveValue('');expect(repo.save).not.toHaveBeenCalled();fireEvent.change(criteria,{target:{value:'交付原型'}});fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));await waitFor(()=>expect(repo.save).toHaveBeenCalledTimes(1));});
+  it('keeps metadata input on repository failure and retries',async()=>{const repo=repository();vi.mocked(repo.save).mockRejectedValueOnce(new RepositoryError('write-failed','quota'));render(<ModelSessionProvider><AppProvider repository={repo}><GoalEditor id={draftFixture().goals[0].id} metadata/></AppProvider></ModelSessionProvider>);const name=await screen.findByLabelText('目标名称');fireEvent.change(name,{target:{value:'更新后的目标'}});fireEvent.click(screen.getByRole('button',{name:'保存目标资料'}));await screen.findByText(/保存失败，输入仍保留/);expect(name).toHaveValue('更新后的目标');fireEvent.click(screen.getByRole('button',{name:'保存目标资料'}));await screen.findByText(/已保存。刷新/);expect(repo.save).toHaveBeenCalledTimes(2);});
+  it('deletes the selected checkpoint task and clears reference after confirmation',async()=>{vi.spyOn(window,'confirm').mockReturnValue(true);const s=draftFixture();s.goals=[readyDraft(1)];const stage=s.goals[0].draft!.content.stages[0];stage.checkpointTaskId=stage.tasks[0].id;const repo=repository();vi.mocked(repo.load).mockResolvedValue(s);render(<ModelSessionProvider><AppProvider repository={repo}><GoalEditor id={s.goals[0].id}/></AppProvider></ModelSessionProvider>);fireEvent.click(await screen.findByRole('button',{name:'删除任务'}));expect(screen.getByLabelText('章节成果检查点')).toHaveValue('');fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));await waitFor(()=>expect(repo.save).toHaveBeenCalled());expect(vi.mocked(repo.save).mock.calls[0][0].goals[0].draft!.content.stages[0].checkpointTaskId).toBeUndefined();});
+});

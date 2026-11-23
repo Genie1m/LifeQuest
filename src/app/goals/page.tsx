@@ -1,2 +1,2 @@
-import { PlaceholderPage } from "@/components/placeholder-page";
-export default function Page() { return <PlaceholderPage kind="goals" />; }
+import { GoalsPage } from "@/components/quest-pages";
+export default function Page() { return <GoalsPage />; }

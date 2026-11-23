@@ -1,0 +1,2 @@
+export const PROVIDERS = [{id:"openai",name:"OpenAI 官方",enabled:true},{id:"qwen",name:"Qwen · 阿里云百炼官方",enabled:true},{id:"compatible",name:"OpenAI 兼容中转 · GPT / Qwen 等",enabled:true},{id:"mock",name:"Mock · 演示模板（非真实 AI）",enabled:true},{id:"deepseek",name:"DeepSeek · 下一阶段接入",enabled:false}] as const;
+export const OPENAI_MODELS = [{id:"gpt-5.6-terra",name:"GPT-5.6 Terra",checkedAt:"2026-11-17",structuredOutputs:true,documentation:"https://developers.openai.com/api/docs/models/gpt-5.6-terra"}] as const;

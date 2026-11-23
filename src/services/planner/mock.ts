@@ -1,0 +1,7 @@
+import { parseProposal, type PlanningInput } from "@/domain/proposal";
+import { PlannerError, type RealityPlanner } from "./types";
+/** Deterministic template. No claim of open-ended model understanding. */
+export class MockPlanner implements RealityPlanner {
+  async test(){return {elapsedMs:0};}
+  async generate(input:PlanningInput,signal?:AbortSignal){if(signal?.aborted)throw new PlannerError("cancelled","请求已取消。");if(input.replanContext){const c=JSON.parse(input.replanContext);return {source:'mock' as const,elapsedMs:0,proposal:parseProposal({reasoning:'演示重规划模板：保留原任务与估时，仅展示逐项审核，不代表真实AI优化。',assumptions:['请自行核对现实可行性。'],warnings:['模板不会自动压缩时间或降低标准。'],stages:[{ref:'adjustment',title:'调整选中任务',milestone:input.successCriteria,checkpointRef:c.tasks[0].ref,tasks:c.tasks}]})};}return {source:"mock" as const,elapsedMs:0,proposal:parseProposal({reasoning:"演示模板：先明确起点，再实践，最后对照成功标准回顾。此结果不来自真实 AI，必须由你调整。",assumptions:["模板不了解你的实际资源和能力，请自行核对。"],warnings:["演示模板不会可靠理解任意目标，尤其不能视为训练或专业建议。"],stages:["起点与范围","实践与记录","成果与回顾"].map((title,i)=>({ref:`s${i}`,title,milestone:i===2?input.successCriteria:`为“${input.title}”保留一份阶段成果`,checkpointRef:`t${i}`,tasks:[{ref:`t${i}`,title:`${title}：${input.title}`.slice(0,80),description:`当前基础：${input.baseline}。每周预算 ${input.weeklyHours} 小时。`.slice(0,500),doneCriteria:i===2?input.successCriteria:"完成一次可回顾的尝试，保存结果并记录一个改进点。",estimatedMinutes:30,difficulty:"standard"}]}))})};}
+}
