@@ -5,12 +5,16 @@ import {fileURLToPath} from 'node:url';
 
 const root=fileURLToPath(new URL('../',import.meta.url));process.chdir(root);
 const read=async p=>JSON.parse(await fs.readFile(p,'utf8'));
-const evidence=await read('docs/evals/RESULTS.json');
+const evidencePath=process.argv[2];
+const evidence=evidencePath?await read(evidencePath):null;
 const dataset=await read('tests/evals/scenarios60.v2.json');
 const dims=['alignment','baseline','time','actionability','verification','sequence','reliability'];
 const critical=['alignment','actionability','verification'];
 const assert=(v,message)=>{if(!v)throw Error(message);};
 const sha=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+assert(dataset.cases.length===60&&new Set(dataset.cases.map(c=>c.id)).size===60,'Expected 60 fixed inputs');
+let evidenceSummary=null;
+if(evidence){
 assert(evidence.cases.length===60&&new Set(evidence.cases.map(c=>c.caseId)).size===60,'Expected 60 unique cases');
 assert(evidence.dataset.version===dataset.datasetVersion,'Dataset version differs');
 let firstStructure=0,observed=0,firstQualified=0,latestQualified=0,calls=0;
@@ -37,8 +41,10 @@ const walk=(v)=>{if(Array.isArray(v))v.forEach(walk);else if(v&&typeof v==='obje
 walk(evidence);
 const evidenceText=JSON.stringify(evidence);
 assert(!/[A-Za-z]:[\\/]|C:\\Users\\|D:\\SCNU\\/.test(evidenceText),'Local absolute path in public evidence');
+evidenceSummary={cases:60,calls,firstStructure,firstQualified,latestQualified,scoreEvidenceCells:60*7};
+}
 async function markdownFiles(dir){const out=[];for(const e of await fs.readdir(dir,{withFileTypes:true})){if(e.isDirectory()&&e.name!=='archive'&&e.name!=='media')out.push(...await markdownFiles(`${dir}/${e.name}`));else if(e.isFile()&&e.name.endsWith('.md'))out.push(`${dir}/${e.name}`);}return out;}
 const files=['README.md','AGENTS.md',...await markdownFiles('docs'),'docs/media/README.md'];
 let links=0;
 for(const f of files){const text=await fs.readFile(f,'utf8');for(const m of text.matchAll(/(?:!?\[[^\]]*\]\(([^)]+)\)|<img\b[^>]*src="([^"]+)"[^>]*>)/g)){let target=m[1]??m[2];if(/^(?:https?:|#|mailto:)/.test(target))continue;target=decodeURIComponent(target.split('#')[0].replace(/^<|>$/g,''));if(!target)continue;await fs.access(path.resolve(path.dirname(f),target));links++;}}
-console.log(JSON.stringify({cases:60,calls,firstStructure,firstQualified,latestQualified,scoreEvidenceCells:60*7,publicationFields:'checked',markdownFiles:files.length,localLinks:links}));
+console.log(JSON.stringify({fixedInputs:60,evidenceChecked:!!evidence,evidenceSummary,markdownFiles:files.length,localLinks:links}));

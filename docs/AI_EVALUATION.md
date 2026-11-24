@@ -6,7 +6,7 @@
 
 5类场景各12组不同输入，共60组；每类初学、基础、进阶各4组，组合时间、偏好、设备、信息缺失和提示注入。输入由AI助手按产品需求编写并固定在tests/evals/scenarios60.v2.json，属于合成场景。旧夹具独立用于兼容回归。
 
-每组首次请求一次，保留状态、计划与实际用量。模型、Prompt、Schema、数据集、输入和代码哈希随批次记录。首次、补跑和人工修改用recordId/parentRecordId关联。操作见[EVALUATION_GUIDE](EVALUATION_GUIDE.md)，结果见[AI_EVAL_RESULTS](AI_EVAL_RESULTS.md)。
+每组首次请求一次，保留状态、计划与实际用量。模型、Prompt、Schema、数据集、输入和代码哈希随批次记录。首次、补跑和人工修改用recordId/parentRecordId关联。操作见[EVALUATION_GUIDE](EVALUATION_GUIDE.md)，案例见[AI_EVALUATION_CASE_STUDY](AI_EVALUATION_CASE_STUDY.md)。
 
 ## 八项标准
 
@@ -43,4 +43,4 @@ B 计划一次合格率：按上述阈值和全部首次请求统计，列明样
 
 C 调整后恢复执行：申请、接受、确认修订、完成下一项真实任务分别记录；对已确认修订观察7天内恢复执行，另报全部申请分母，未满观察期单列。
 
-当前公开证据为固定合成场景的模型输出、程序检查与AI辅助评分。用户操作耗时、恢复执行和留存通过后续体验研究采集。
+公开材料展示固定用例、评分锚点与AI辅助人工复核流程。实验输出与逐条评分在本机保存，用户体验指标通过实际研究采集。

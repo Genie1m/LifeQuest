@@ -11,7 +11,7 @@
 | 计划调整 | 新预算、执行反馈、延期或后移选择、逐项差异与确认 | 已完成成果、XP与最终标准保全及修订后继续执行 |
 | AI质量评估 | 固定60组输入、8项标准、版本冻结、独立补跑和Excel | 原始首次与补跑分开，AI辅助与人工评分分开 |
 
-当前需求与规则见[PRD](PRD.md)，数据流见[ARCHITECTURE](ARCHITECTURE.md)，实际模型结果见[AI_EVAL_RESULTS](AI_EVAL_RESULTS.md)。
+当前需求与规则见[PRD](PRD.md)，数据流见[ARCHITECTURE](ARCHITECTURE.md)，评测方法与产品改进见[评测案例](AI_EVALUATION_CASE_STUDY.md)。
 
 ## 后续优先级
 

@@ -11,10 +11,10 @@ next-env.d.ts
 Thumbs.db
 .qa/
 ~$*.xlsx
-# Publish curated evidence; generated workbooks and raw batches stay local.
+# Evaluation outputs and graded workbooks remain local.
 /docs/evals/*
 !/docs/evals/README.md
-!/docs/evals/RESULTS.json
+/docs/AI_EVAL_RESULTS.md
 /docs/archive/
 /docs/*_ACCEPTANCE.md
 /docs/ENGINEERING_HEALTH.md

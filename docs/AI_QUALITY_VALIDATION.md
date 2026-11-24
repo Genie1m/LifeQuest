@@ -20,4 +20,4 @@
 
 内容评分使用冻结的1至5分锚点与逐项证据，AI辅助与人工分开。先确定阈值，再读取结果。部分人工独立盲评检验评分一致性，未参与调优的新场景检验泛化。
 
-实际命令见[评测操作指南](EVALUATION_GUIDE.md)，当前结果见[评测结果](AI_EVAL_RESULTS.md)。
+实际命令见[评测操作指南](EVALUATION_GUIDE.md)，产品案例见[评测与改进案例](AI_EVALUATION_CASE_STUDY.md)。

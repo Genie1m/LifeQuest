@@ -1,12 +1,7 @@
-# AI规划评测证据
+# 评测用例与本机记录
 
-[RESULTS.json](RESULTS.json)包含固定60个合成输入、完整选定计划、逐次请求状态、程序结果、7维AI辅助评分及依据。每条保留输入哈希、原记录ID和补跑关联；发布字段通过白名单筛选。
+仓库提供[60组固定合成输入](../../tests/evals/scenarios60.v2.json)、[评分锚点](../AI_EVALUATION.md)与[运行指南](../EVALUATION_GUIDE.md)。
 
-| 内容 | 位置 |
-| --- | --- |
-| 当前统计与产品结论 | [评测结果](../AI_EVAL_RESULTS.md) |
-| 固定输入 | [scenarios60.v2.json](../../tests/evals/scenarios60.v2.json) |
-| 评分锚点与合格条件 | [评测规范](../AI_EVALUATION.md) |
-| 运行、冻结、Excel与补跑 | [操作指南](../EVALUATION_GUIDE.md) |
+评测采用程序校验、AI辅助预审和人工复核的分工。逐条输出、实验批次、评分工作簿和调试记录保存到本机.qa；该目录不分发生成结果文件。
 
-数据来自真实中转请求，输入为预先固定的合成场景。内容评分为AI辅助评审，人工评分留空。原始批次、完整Excel与过程截图留在本机.qa；仓库分发当前结果与可复查证据。
+产品问题、分析方法和规划改进见[评测案例](../AI_EVALUATION_CASE_STUDY.md)。
